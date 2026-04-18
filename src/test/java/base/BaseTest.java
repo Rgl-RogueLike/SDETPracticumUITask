@@ -11,7 +11,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import java.time.Duration;
 
 public class BaseTest {
-    protected static WebDriver driver;
+    protected WebDriver driver;
 
     @BeforeAll
     static void beforeAll() {

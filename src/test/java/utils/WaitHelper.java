@@ -29,6 +29,10 @@ public class WaitHelper {
         return wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
+    public WebElement waitForClickable(org.openqa.selenium.By locator) {
+        return wait.until(ExpectedConditions.elementToBeClickable(locator));
+    }
+
     public void hardWait(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
