@@ -22,7 +22,7 @@ public class WaitHelper {
     }
 
     public WebElement waitForVisibility(org.openqa.selenium.By locator) {
-        return wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
     public WebElement waitForClickable(WebElement element) {
