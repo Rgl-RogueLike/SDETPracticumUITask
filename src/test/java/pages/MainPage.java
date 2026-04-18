@@ -1,6 +1,7 @@
 package pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -17,6 +18,9 @@ public class MainPage {
 
     @FindBy(id = "categorymenu")
     private WebElement categoryMenu;
+
+    @FindBy(id = "filter_keyword")
+    private WebElement searchInput;
 
     public MainPage(WebDriver driver) {
         this.driver = driver;
@@ -44,5 +48,12 @@ public class MainPage {
         WebElement categoryLink = waitHelper.waitForClickable(linkLocator);
         categoryLink.click();
         return new CategoryPage(driver);
+    }
+
+    public ProductListingPage searchFor(String text) {
+        waitHelper.waitForVisibility(searchInput);
+        searchInput.clear();
+        searchInput.sendKeys(text + Keys.ENTER);
+        return new ProductListingPage(driver);
     }
 }
