@@ -27,7 +27,9 @@ public class ParameterProvider {
 
     public static String get(String key) {
         if (instance == null) {
-            instance = new ParameterProvider();
+            synchronized (ParameterProvider.class) {
+                instance = new ParameterProvider();
+            }
         }
         return instance.parameters.get(key);
     }
