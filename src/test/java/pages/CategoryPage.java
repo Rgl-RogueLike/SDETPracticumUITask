@@ -1,6 +1,7 @@
 package pages;
 
 import io.qameta.allure.Step;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -20,6 +21,8 @@ public class CategoryPage extends BasePage {
     @FindBy(css = ".thumbnails.grid, .product-list, .products .row, [class*='thumbnail'], .thumbnail-list")
     private WebElement productGridContainer;
 
+    private final By productGridLocator = By.cssSelector(".thumbnails.grid");
+
     @FindBy(css = ".thumbnails.grid .prdocutname")
     private List<WebElement> productNameElements;
 
@@ -28,8 +31,9 @@ public class CategoryPage extends BasePage {
 
     public CategoryPage(WebDriver driver, WebDriverWait waiter) {
         super(driver, waiter);
+        waiter.until(ExpectedConditions.numberOfElementsToBeMoreThan(productGridLocator, 0));
         PageFactory.initElements(driver, this);
-        waiter.until(ExpectedConditions.visibilityOf(productGridContainer));
+        waiter.until(ExpectedConditions.visibilityOf(sortDropdown));
     }
 
     @Step("Select sort option: {optionText}")
