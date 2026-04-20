@@ -21,8 +21,6 @@ public class ProductListingPage extends BasePage {
     @FindBy(css = ".thumbnails.grid .prdocutname")
     private List<WebElement> productLinks;
 
-    //private final By productCardLocator = By.cssSelector(".thumbnails.grid > div");
-
     public ProductListingPage(WebDriver driver, WebDriverWait waiter) {
         super(driver, waiter);
         PageFactory.initElements(driver, this);

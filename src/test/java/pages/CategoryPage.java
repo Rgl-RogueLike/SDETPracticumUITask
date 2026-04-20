@@ -59,11 +59,4 @@ public class CategoryPage extends BasePage {
         }
         return prices;
     }
-
-    public List<String> getAvailableSortOptions() {
-        Select select = new Select(sortDropdown);
-        return select.getOptions().stream()
-                .map(WebElement::getText)
-                .toList();
-    }
 }
