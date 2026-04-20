@@ -23,6 +23,9 @@ public class CartPage extends BasePage {
     @FindBy(id = "cart_update")
     private WebElement updateBtn;
 
+    @FindBy(css = "a.logo")
+    private WebElement homeLogoLink;
+
     public CartPage(WebDriver driver, WebDriverWait waiter) {
         super(driver, waiter);
         PageFactory.initElements(driver, this);
@@ -72,8 +75,24 @@ public class CartPage extends BasePage {
         return dashIndex != -1 ? name.substring(0, dashIndex).trim() : name.trim();
     }
 
+    public MainPage goToHomePage() {
+        waiter.until(ExpectedConditions.elementToBeClickable(homeLogoLink)).click();
+        return new MainPage(driver, waiter);
+    }
+
     public void updateCart() {
         waiter.until(ExpectedConditions.elementToBeClickable(updateBtn)).click();
+    }
+
+    public void removeByIndex(int index) {
+        List<CartItem> items = getItems();
+        if (index < 0 || index >= items.size()) {
+            throw new RuntimeException("Некорректный индекс для указателя: " + index);
+        }
+        CartItem itemToDelete = items.get(index);
+        itemToDelete.clickDelete();
+
+        waiter.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".table.table-striped.table-bordered tbody tr td")));
     }
 
     public static class CartItem {
@@ -121,8 +140,5 @@ public class CartPage extends BasePage {
             return quantityInput;
         }
 
-        public void setQuantityInput(WebElement quantityInput) {
-            this.quantityInput = quantityInput;
-        }
     }
 }
