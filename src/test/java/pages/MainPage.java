@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MainPage extends BasePage {
 
@@ -22,6 +23,9 @@ public class MainPage extends BasePage {
 
     @FindBy(xpath = "//section[@id='categorymenu']//ul[contains(@class, 'nav-pills categorymenu')]/li/a")
     private List<WebElement> categoryLinks;
+
+    @FindBy(css = ".prdocutname")
+    private List<WebElement> productLinks;
 
     public MainPage(WebDriver driver, WebDriverWait waiter) {
         super(driver, waiter);
@@ -50,5 +54,22 @@ public class MainPage extends BasePage {
         searchInput.clear();
         searchInput.sendKeys(text + Keys.ENTER);
         return new ProductListingPage(driver, waiter);
+    }
+
+    public void waitForProductsToLoad() {
+        waiter.until(ExpectedConditions.numberOfElementsToBeMoreThan(
+                By.cssSelector(".prdocutname"), 0
+        ));
+    }
+
+    public ProductPage navigateToRandomProduct() {
+        waiter.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".prdocutname")));
+        if (productLinks.isEmpty()) {
+            throw new RuntimeException("На главной странице нет товаров");
+        }
+        Random random = new Random();
+        int randomIndex = random.nextInt(productLinks.size());
+        productLinks.get(randomIndex).click();
+        return new ProductPage(driver, waiter);
     }
 }
