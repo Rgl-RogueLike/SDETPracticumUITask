@@ -34,11 +34,4 @@ public class ProductPage extends BasePage {
         waiter.until(ExpectedConditions.elementToBeClickable(addToCartBtn)).click();
         return new CartPage(driver, waiter);
     }
-
-    public ProductListingPage addToCartAndReturnToListing(String listingUrl) {
-        waiter.until(ExpectedConditions.elementToBeClickable(addToCartBtn)).click();
-        waiter.until(ExpectedConditions.visibilityOf(cartTotalElement));
-        driver.get(listingUrl);
-        return new ProductListingPage(driver, waiter);
-    }
 }
