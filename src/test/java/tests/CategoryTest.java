@@ -1,8 +1,8 @@
 package tests;
 
-import base.BaseTest;
-import constants.AppConstants;
+import helpers.ParameterProvider;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.CategoryPage;
 import pages.MainPage;
@@ -14,18 +14,20 @@ import java.util.List;
 public class CategoryTest extends BaseTest {
 
     @Test
+    @DisplayName("Проверка сортировки товаров в категории")
     public void testCategorySorting() {
-        driver.get(AppConstants.BASE_URL);
-        MainPage mainPage = new MainPage(driver);
+        MainPage mainPage = new MainPage(driver, waiter);
         List<String> categories = mainPage.getAvailableCategories();
         categories.removeIf(name -> name.equalsIgnoreCase("HOME"));
 
-        CategoryPage categoryPage = findCategoryWithMinProducts(mainPage, categories, AppConstants.MIN_PRODUCTS_COUNT);
+        int minProducts = Integer.parseInt(ParameterProvider.get("min.products.count"));
 
-        checkSorting(categoryPage, AppConstants.SORT_NAME_A_Z);
-        checkSorting(categoryPage, AppConstants.SORT_NAME_Z_A);
-        checkSorting(categoryPage, AppConstants.SORT_PRICE_LOW_HIGH);
-        checkSorting(categoryPage, AppConstants.SORT_PRICE_HIGH_LOW);
+        CategoryPage categoryPage = findCategoryWithMinProducts(mainPage, categories, minProducts);
+
+        checkSorting(categoryPage, ParameterProvider.get("sort.products.name.a.z"), true);
+        checkSorting(categoryPage, ParameterProvider.get("sort.products.name.z.a"), false);
+        checkSorting(categoryPage, ParameterProvider.get("sort.products.price.low.high"), true);
+        checkSorting(categoryPage, ParameterProvider.get("sort.products.price.high.low"), false);
     }
 
     private CategoryPage findCategoryWithMinProducts(MainPage mainPage, List<String> categories, int minProducts) {
@@ -36,41 +38,35 @@ public class CategoryTest extends BaseTest {
             if (count >= minProducts) {
                 return categoryPage;
             } else {
-                driver.navigate().to(AppConstants.BASE_URL);
-                mainPage = new MainPage(driver);
+                driver.get(ParameterProvider.get("base.url"));
+                mainPage = new MainPage(driver, waiter);
             }
         }
         Assertions.fail("Не найдено ни одной категории с количеством товаров >= " + minProducts);
         return null;
     }
 
-    private void checkSorting(CategoryPage categoryPage, String sortType) {
-        boolean isAscending = false;
-        if (sortType.equals(AppConstants.SORT_NAME_A_Z) || sortType.equals(AppConstants.SORT_PRICE_LOW_HIGH)) {
-            isAscending = true;
-        } else if (sortType.equals(AppConstants.SORT_NAME_Z_A) || sortType.equals(AppConstants.SORT_PRICE_HIGH_LOW)) {
-            isAscending = false;
-        }
+    private void checkSorting(CategoryPage categoryPage, String sortType, boolean isAscending) {
         categoryPage.selectSortBy(sortType);
 
         if (sortType.startsWith("Name")) {
             List<String> items = categoryPage.getProductNames();
-            verifyListIsSorted(items, isAscending);
+            verifyListIsSorted(items, isAscending, "Имена товаров");
         } else {
             List<Double> prices = categoryPage.getProductPrices();
-            verifyListIsSorted(prices, isAscending);
+            verifyListIsSorted(prices, isAscending, "Цены товаров");
         }
 
     }
 
-    private <T extends Comparable> void verifyListIsSorted(List list, boolean isAscending) {
+    private <T extends Comparable> void verifyListIsSorted(List list, boolean isAscending, String messagePrefix) {
         List sortedList;
         if (isAscending) {
             sortedList = list.stream().sorted().toList();
-            Assertions.assertEquals(sortedList, list, "Список не отсортирован по возрастанию");
+            Assertions.assertEquals(sortedList, list, messagePrefix + " не отсортированы по возрастанию");
         } else {
             sortedList = list.stream().sorted(Comparator.reverseOrder()).toList();
-            Assertions.assertEquals(sortedList, list, "Список не отсортирован по убыванию");
+            Assertions.assertEquals(sortedList, list, messagePrefix + " не отсортированы по убыванию");
         }
     }
 }
