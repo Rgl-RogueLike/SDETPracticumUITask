@@ -42,8 +42,4 @@ public class ProductListingPage extends BasePage {
         productLinks.get(index).click();
         return new ProductPage(driver, waiter);
     }
-
-    public String getCurrentUrl() {
-        return driver.getCurrentUrl();
-    }
 }
