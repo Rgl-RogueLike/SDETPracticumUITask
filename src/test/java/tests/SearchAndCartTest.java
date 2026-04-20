@@ -10,8 +10,6 @@ import pages.ProductListingPage;
 import pages.ProductPage;
 import utils.TestDataUtils;
 
-import java.util.Random;
-
 public class SearchAndCartTest extends BaseTest {
 
     @Test
