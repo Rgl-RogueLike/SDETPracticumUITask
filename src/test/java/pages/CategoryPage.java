@@ -43,7 +43,7 @@ public class CategoryPage extends BasePage {
         List<WebElement> elements = driver.findElements(By.cssSelector(
                 ".thumbnails.grid a.prdocutname"));
         List<String> names = new ArrayList<>();
-        for (WebElement element : productNameElements) {
+        for (WebElement element : elements) {
             names.add(element.getText().trim());
         }
         return names;
