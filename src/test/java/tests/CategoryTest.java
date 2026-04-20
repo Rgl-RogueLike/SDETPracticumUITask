@@ -5,6 +5,7 @@ import io.qameta.allure.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Dimension;
 import pages.CategoryPage;
 import pages.MainPage;
 
@@ -21,6 +22,7 @@ public class CategoryTest extends BaseTest {
     @Severity(SeverityLevel.CRITICAL)
     @DisplayName("Проверка сортировки товаров в категории")
     public void testCategorySorting() {
+        driver.manage().window().setSize(new Dimension(1920, 1080));
         MainPage mainPage = new MainPage(driver, waiter);
         List<String> categories = mainPage.getAvailableCategories();
         categories.removeIf(name -> name.equalsIgnoreCase("HOME"));
