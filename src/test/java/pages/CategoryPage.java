@@ -15,13 +15,13 @@ import java.util.List;
 
 public class CategoryPage extends BasePage {
 
+    private final By sortDropdownLocator = By.id("sort");
+    private final By productGridLocator = By.cssSelector(".thumbnails.grid");
+    private final By productNameLocator = By.cssSelector(".prdocutname");
+    private final By priceLocator = By.cssSelector(".oneprice, .pricenew");
+
     @FindBy(id = "sort")
     private WebElement sortDropdown;
-
-    @FindBy(css = ".thumbnails.grid, .product-list, .products .row, [class*='thumbnail'], .thumbnail-list")
-    private WebElement productGridContainer;
-
-    private final By productGridLocator = By.cssSelector(".thumbnails.grid");
 
     @FindBy(css = ".thumbnails.grid .prdocutname")
     private List<WebElement> productNameElements;
@@ -41,7 +41,6 @@ public class CategoryPage extends BasePage {
         waiter.until(ExpectedConditions.visibilityOf(sortDropdown));
         Select select = new Select(sortDropdown);
         select.selectByVisibleText(optionText);
-        waiter.until(ExpectedConditions.visibilityOf(productGridContainer));
         return this;
     }
 
