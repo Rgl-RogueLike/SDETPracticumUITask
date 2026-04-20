@@ -1,5 +1,6 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -31,6 +32,7 @@ public class CategoryPage extends BasePage {
         waiter.until(ExpectedConditions.visibilityOf(sortDropdown));
     }
 
+    @Step("Select sort option: {optionText}")
     public CategoryPage selectSortBy(String optionText) {
         waiter.until(ExpectedConditions.visibilityOf(sortDropdown));
         Select select = new Select(sortDropdown);
@@ -39,6 +41,7 @@ public class CategoryPage extends BasePage {
         return this;
     }
 
+    @Step("Get product names list")
     public List<String> getProductNames() {
         List<String> names = new ArrayList<>();
         for (WebElement element : productNameElements) {
@@ -47,6 +50,7 @@ public class CategoryPage extends BasePage {
         return names;
     }
 
+    @Step("Get product prices list")
     public List<Double> getProductPrices() {
         List<Double> prices = new ArrayList<>();
         for (WebElement element : productPriceElements) {

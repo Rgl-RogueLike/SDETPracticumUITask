@@ -1,5 +1,6 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -42,6 +43,7 @@ public class MainPage extends BasePage {
         return categories;
     }
 
+    @Step("Navigate to category: {categoryName}")
     public CategoryPage navigateToCategory(String categoryName) {
         By linkLocator = By.linkText(categoryName);
         WebElement categoryLink = waiter.until(ExpectedConditions.elementToBeClickable(linkLocator));
@@ -49,6 +51,7 @@ public class MainPage extends BasePage {
         return new CategoryPage(driver, waiter);
     }
 
+    @Step("Search for product: {text}")
     public ProductListingPage searchFor(String text) {
         waiter.until(ExpectedConditions.visibilityOf(searchInput));
         searchInput.clear();
@@ -56,12 +59,7 @@ public class MainPage extends BasePage {
         return new ProductListingPage(driver, waiter);
     }
 
-    public void waitForProductsToLoad() {
-        waiter.until(ExpectedConditions.numberOfElementsToBeMoreThan(
-                By.cssSelector(".prdocutname"), 0
-        ));
-    }
-
+    @Step("Navigate to random product from main page")
     public ProductPage navigateToRandomProduct() {
         waiter.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".prdocutname")));
         if (productLinks.isEmpty()) {

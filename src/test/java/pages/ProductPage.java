@@ -1,5 +1,6 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -23,6 +24,7 @@ public class ProductPage extends BasePage {
         PageFactory.initElements(driver, this);
     }
 
+    @Step("Set quantity: {quantity}")
     public ProductPage setQuantity(int quantity) {
         waiter.until(ExpectedConditions.visibilityOf(quantityInput));
         quantityInput.clear();
@@ -30,6 +32,7 @@ public class ProductPage extends BasePage {
         return this;
     }
 
+    @Step("Add to cart")
     public CartPage addToCart() {
         waiter.until(ExpectedConditions.elementToBeClickable(addToCartBtn)).click();
         return new CartPage(driver, waiter);

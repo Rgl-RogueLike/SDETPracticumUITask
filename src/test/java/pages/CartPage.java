@@ -1,5 +1,6 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -31,6 +32,7 @@ public class CartPage extends BasePage {
         PageFactory.initElements(driver, this);
     }
 
+    @Step("Get list of items from cart")
     public List<CartItem> getItems() {
         waiter.until(ExpectedConditions.visibilityOf(cartTable));
 
@@ -54,6 +56,7 @@ public class CartPage extends BasePage {
         return items;
     }
 
+    @Step("Find cheapest item in cart")
     public CartItem findCheapestItem() {
         List<CartItem> items = getItems();
         return items.stream()
@@ -61,6 +64,7 @@ public class CartPage extends BasePage {
                 .orElse(null);
     }
 
+    @Step("Get total cart price")
     public double getTotal() {
         waiter.until(ExpectedConditions.visibilityOf(totalElement));
         return parseCurrency(totalElement.getText());
@@ -75,16 +79,19 @@ public class CartPage extends BasePage {
         return dashIndex != -1 ? name.substring(0, dashIndex).trim() : name.trim();
     }
 
+    @Step("Click homo logo link")
     public MainPage goToHomePage() {
         waiter.until(ExpectedConditions.elementToBeClickable(homeLogoLink)).click();
         return new MainPage(driver, waiter);
     }
 
+    @Step("Click update button to refresh cart")
     public void updateCart() {
         waiter.until(ExpectedConditions.elementToBeClickable(updateBtn)).click();
     }
 
-    public void removeByIndex(int index) {
+    @Step("Remove item at index {index} from cart")
+    public void removeItemByIndex(int index) {
         List<CartItem> items = getItems();
         if (index < 0 || index >= items.size()) {
             throw new RuntimeException("Некорректный индекс для указателя: " + index);

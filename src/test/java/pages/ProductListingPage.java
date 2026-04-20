@@ -1,5 +1,6 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -27,6 +28,7 @@ public class ProductListingPage extends BasePage {
         waiter.until(ExpectedConditions.visibilityOf(productGridContainer));
     }
 
+    @Step("Sort products by: {optionText}")
     public ProductListingPage selectSortBy(String optionText) {
         waiter.until(ExpectedConditions.visibilityOf(sortDropdown));
         Select select = new Select(sortDropdown);
@@ -35,6 +37,7 @@ public class ProductListingPage extends BasePage {
         return this;
     }
 
+    @Step("Go to product by index: {index}")
     public ProductPage navigateToProductByIndex(int index) {
         if (index < 0 || index >= productLinks.size()) {
             throw new IllegalArgumentException("Товар с индексом " + index + " не найден");
