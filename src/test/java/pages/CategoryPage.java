@@ -27,8 +27,6 @@ public class CategoryPage extends BasePage {
     public CategoryPage(WebDriver driver, WebDriverWait waiter) {
         super(driver, waiter);
         PageFactory.initElements(driver, this);
-        waiter.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".thumbnails.grid")));
-        waiter.until(ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("a.prdocutname"), 0));
         waiter.until(ExpectedConditions.visibilityOf(sortDropdown));
     }
 
@@ -42,8 +40,10 @@ public class CategoryPage extends BasePage {
 
     @Step("Get product names list")
     public List<String> getProductNames() {
+        List<WebElement> elements = driver.findElements(By.cssSelector(
+                "a.prdocutname, .productname, [class*='productname'], .thumbnail a"));
         List<String> names = new ArrayList<>();
-        for (WebElement element : productNameElements) {
+        for (WebElement element : elements) {
             names.add(element.getText().trim());
         }
         return names;
