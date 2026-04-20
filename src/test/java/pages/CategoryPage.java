@@ -15,24 +15,20 @@ import java.util.List;
 
 public class CategoryPage extends BasePage {
 
-    private final By sortDropdownLocator = By.id("sort");
-    private final By productGridLocator = By.cssSelector(".thumbnails.grid");
-    private final By productNameLocator = By.cssSelector(".prdocutname");
-    private final By priceLocator = By.cssSelector(".oneprice, .pricenew");
-
     @FindBy(id = "sort")
     private WebElement sortDropdown;
 
-    @FindBy(css = ".thumbnails.grid .prdocutname")
+    @FindBy(css = ".thumbnails.grid a.prdocutname")
     private List<WebElement> productNameElements;
 
-    @FindBy(css = ".thumbnails.grid .oneprice, thumbnails.grid .pricenew")
+    @FindBy(css = ".thumbnails.grid .oneprice")
     private List<WebElement> productPriceElements;
 
     public CategoryPage(WebDriver driver, WebDriverWait waiter) {
         super(driver, waiter);
-        waiter.until(ExpectedConditions.numberOfElementsToBeMoreThan(productGridLocator, 0));
         PageFactory.initElements(driver, this);
+        waiter.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".thumbnails.grid")));
+        waiter.until(ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("a.prdocutname"), 0));
         waiter.until(ExpectedConditions.visibilityOf(sortDropdown));
     }
 
