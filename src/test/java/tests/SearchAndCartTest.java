@@ -1,7 +1,7 @@
 package tests;
 
 import helpers.ParameterProvider;
-import io.qameta.allure.Step;
+import io.qameta.allure.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,9 +13,13 @@ import utils.TestDataUtils;
 
 import java.util.List;
 
+@Epic("Shopping Cart")
+@Feature("Checkout & Totals")
 public class SearchAndCartTest extends BaseTest {
 
     @Test
+    @Story("Update cart item quantity and verify calculation")
+    @Severity(SeverityLevel.CRITICAL)
     @DisplayName("Проверка поисковой выдачи, добавления товара и изменения количество в корзине")
     public void testSearchAndCartOperations() {
         MainPage mainPage = new MainPage(driver, waiter);

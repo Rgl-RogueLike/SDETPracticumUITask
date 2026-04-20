@@ -1,7 +1,7 @@
 package tests;
 
 import helpers.ParameterProvider;
-import io.qameta.allure.Step;
+import io.qameta.allure.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,9 +14,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Epic("Shopping Cart")
+@Feature("Cart Management")
 public class CartTest extends BaseTest{
 
     @Test
+    @Story("Add random products and delete even items")
+    @Severity(SeverityLevel.CRITICAL)
     @DisplayName("Проверка добавления 5 случайных товаров и удаления четных позиций в корзине")
     public void testRandomProductDelection() {
         MainPage mainPage = new MainPage(driver, waiter);

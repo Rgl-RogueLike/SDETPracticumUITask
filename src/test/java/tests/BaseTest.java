@@ -1,8 +1,11 @@
 package tests;
 
 import helpers.ParameterProvider;
+import io.qameta.allure.Attachment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -31,9 +34,15 @@ public abstract class BaseTest {
     public void tearDown() {
         WebDriver drv = DRIVER.get();
         if (drv != null) {
+            attachScreenshot();
             drv.quit();
             DRIVER.remove();
             WAITER.remove();
         }
+    }
+
+    @Attachment(value = "Screenshot on failure", type = "image/png")
+    public byte[] attachScreenshot() {
+        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
     }
 }

@@ -1,7 +1,7 @@
 package tests;
 
 import helpers.ParameterProvider;
-import io.qameta.allure.Step;
+import io.qameta.allure.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,9 +12,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+@Epic("Store navigation")
+@Feature("Product Catalog")
 public class CategoryTest extends BaseTest {
 
     @Test
+    @Story("Verify catalog sorting functionality")
+    @Severity(SeverityLevel.CRITICAL)
     @DisplayName("Проверка сортировки товаров в категории")
     public void testCategorySorting() {
         MainPage mainPage = new MainPage(driver, waiter);
