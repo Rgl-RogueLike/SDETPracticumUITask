@@ -30,7 +30,7 @@ public abstract class BaseTest {
         if ("true".equals(System.getenv("HEADLESS"))) {
             options.addArguments("--headless=new");
         }
-        DRIVER.set(new ChromeDriver());
+        DRIVER.set(new ChromeDriver(options));
         WAITER.set(new WebDriverWait(DRIVER.get(),
                 Duration.ofSeconds(Long.parseLong(ParameterProvider.get("explicit.wait.time")))));
         driver = DRIVER.get();
