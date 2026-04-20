@@ -29,7 +29,7 @@ public class CategoryPage extends BasePage {
     public CategoryPage(WebDriver driver, WebDriverWait waiter) {
         super(driver, waiter);
         PageFactory.initElements(driver, this);
-        waiter.until(ExpectedConditions.visibilityOf(sortDropdown));
+        waiter.until(ExpectedConditions.visibilityOf(productGridContainer));
     }
 
     @Step("Select sort option: {optionText}")
