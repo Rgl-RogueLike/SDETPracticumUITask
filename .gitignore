@@ -55,3 +55,4 @@ build/
 allure-results/*
 !allure-results/screenshots/
 allure-report/
+.allure
