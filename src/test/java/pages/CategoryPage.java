@@ -41,9 +41,9 @@ public class CategoryPage extends BasePage {
     @Step("Get product names list")
     public List<String> getProductNames() {
         List<WebElement> elements = driver.findElements(By.cssSelector(
-                "a.prdocutname, .productname, [class*='productname'], .thumbnail a"));
+                ".thumbnails.grid a.prdocutname"));
         List<String> names = new ArrayList<>();
-        for (WebElement element : elements) {
+        for (WebElement element : productNameElements) {
             names.add(element.getText().trim());
         }
         return names;
