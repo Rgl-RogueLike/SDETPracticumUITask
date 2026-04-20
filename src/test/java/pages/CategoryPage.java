@@ -17,7 +17,7 @@ public class CategoryPage extends BasePage {
     @FindBy(id = "sort")
     private WebElement sortDropdown;
 
-    @FindBy(css = ".thumbnails.grid")
+    @FindBy(css = ".thumbnails.grid, .product-list, .products .row, [class*='thumbnail'], .thumbnail-list")
     private WebElement productGridContainer;
 
     @FindBy(css = ".thumbnails.grid .prdocutname")
