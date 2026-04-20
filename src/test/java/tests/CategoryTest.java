@@ -1,6 +1,7 @@
 package tests;
 
 import helpers.ParameterProvider;
+import io.qameta.allure.Step;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ public class CategoryTest extends BaseTest {
         checkSorting(categoryPage, ParameterProvider.get("sort.products.price.high.low"), false);
     }
 
+    @Step("Find category with at least {minProducts} products")
     private CategoryPage findCategoryWithMinProducts(MainPage mainPage, List<String> categories, int minProducts) {
         Collections.shuffle(categories);
         for (String categoryName : categories) {
@@ -46,6 +48,7 @@ public class CategoryTest extends BaseTest {
         return null;
     }
 
+    @Step("Check {sortType} sorting. Ascending: {isAscending}")
     private void checkSorting(CategoryPage categoryPage, String sortType, boolean isAscending) {
         categoryPage.selectSortBy(sortType);
 
@@ -59,6 +62,7 @@ public class CategoryTest extends BaseTest {
 
     }
 
+    @Step("Verify list is sorted by {isAscending}")
     private <T extends Comparable> void verifyListIsSorted(List list, boolean isAscending, String messagePrefix) {
         List sortedList;
         if (isAscending) {
