@@ -8,6 +8,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -22,6 +23,13 @@ public abstract class BaseTest {
 
     @BeforeEach
     public void setUp() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--start-maximized");
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--disable-blink-features=AutomationControlled");
+        if ("true".equals(System.getenv("HEADLESS"))) {
+            options.addArguments("--headless=new");
+        }
         DRIVER.set(new ChromeDriver());
         WAITER.set(new WebDriverWait(DRIVER.get(),
                 Duration.ofSeconds(Long.parseLong(ParameterProvider.get("explicit.wait.time")))));
