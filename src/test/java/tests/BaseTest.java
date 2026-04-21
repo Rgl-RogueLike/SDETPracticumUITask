@@ -13,6 +13,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
+/**
+ * Абстрактный базовый класс для всех UI-тестов.
+ * Предоставляет общую настройку WebDriver, Chrome браузера и WebDriverWait.
+ * Использует ThreadLocal для thread-safe работы в параллельных тестах.
+ */
 public abstract class BaseTest {
 
     private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
@@ -21,6 +26,9 @@ public abstract class BaseTest {
     protected WebDriver driver;
     protected WebDriverWait waiter;
 
+    /**
+     * Настройка тестового окружения перед каждым тестом.
+     */
     @BeforeEach
     public void setUp() {
         ChromeOptions options = new ChromeOptions();
@@ -38,6 +46,9 @@ public abstract class BaseTest {
         driver.get(ParameterProvider.get("base.url"));
     }
 
+    /**
+     * Очистка ресурсов после каждого теста.
+     */
     @AfterEach
     public void tearDown() {
         WebDriver drv = DRIVER.get();
@@ -49,6 +60,12 @@ public abstract class BaseTest {
         }
     }
 
+    /**
+     * Создает скриншот текущего состояния браузера.
+     * Автоматически прикрепляется к Allure отчету при падении теста.
+     *
+     * @return скриншот в формате PNG байтового массива
+     */
     @Attachment(value = "Screenshot on failure", type = "image/png")
     public byte[] attachScreenshot() {
         return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);

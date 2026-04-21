@@ -13,10 +13,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Тест функции сортировки товаров в категориях каталога.
+ * Проверяет корректность сортировки по имени и цене (по возрастанию/убыванию).
+ */
 @Epic("Store navigation")
 @Feature("Product Catalog")
 public class CategoryTest extends BaseTest {
 
+    /**
+     * Тест проверки работоспособности фильтрации товаров в категории.
+     */
     @Test
     @Story("Verify catalog sorting functionality")
     @Severity(SeverityLevel.CRITICAL)
@@ -37,6 +44,14 @@ public class CategoryTest extends BaseTest {
         checkSorting(categoryPage, ParameterProvider.get("sort.products.price.high.low"), false);
     }
 
+    /**
+     * Находит категорию с достаточным количеством товаров для тестирования.
+     *
+     * @param mainPage начальная страница
+     * @param categories список доступных категорий
+     * @param minProducts минимальное количество товаров в категории
+     * @return страница категории с достаточным количеством товаров
+     */
     @Step("Find category with at least {minProducts} products")
     private CategoryPage findCategoryWithMinProducts(MainPage mainPage, List<String> categories, int minProducts) {
         Collections.shuffle(categories);
@@ -54,6 +69,13 @@ public class CategoryTest extends BaseTest {
         return null;
     }
 
+    /**
+     * Проверяет корректность сортировки товаров в категории.
+     *
+     * @param categoryPage страница категории
+     * @param sortType тип сортировки
+     * @param isAscending true для сортировки по возрастанию, false для убывания
+     */
     @Step("Check {sortType} sorting. Ascending: {isAscending}")
     private void checkSorting(CategoryPage categoryPage, String sortType, boolean isAscending) {
         categoryPage.selectSortBy(sortType);
@@ -68,6 +90,14 @@ public class CategoryTest extends BaseTest {
 
     }
 
+    /**
+     * Проверяет корректность сортировки списка элементов.
+     *
+     * @param <T> тип элементов списка (должен реализовывать Comparable)
+     * @param list исходный список
+     * @param isAscending true для проверки по возрастанию, false для убывания
+     * @param messagePrefix префикс сообщения об ошибке
+     */
     @Step("Verify list is sorted by {isAscending}")
     private <T extends Comparable> void verifyListIsSorted(List list, boolean isAscending, String messagePrefix) {
         List sortedList;

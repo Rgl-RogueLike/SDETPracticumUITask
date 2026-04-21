@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Страница корзины.
+ * Содержит методы для добавления, удаления и проверки суммы.
+ */
 public class CartPage extends BasePage {
 
     @FindBy(css = "#totals_table tbody tr td:nth-child(2) span")
@@ -27,11 +31,22 @@ public class CartPage extends BasePage {
     @FindBy(css = "a.logo")
     private WebElement homeLogoLink;
 
+    /**
+     * Конструктор страницы корзины.
+     *
+     * @param driver драйвер.
+     * @param waiter экземпляр WebDriver.
+     */
     public CartPage(WebDriver driver, WebDriverWait waiter) {
         super(driver, waiter);
         PageFactory.initElements(driver, this);
     }
 
+    /**
+     * Список товаров в корзине.
+     *
+     * @return список объектов товаров.
+     */
     @Step("Get list of items from cart")
     public List<CartItem> getItems() {
         waiter.until(ExpectedConditions.visibilityOf(cartTable));
@@ -56,6 +71,11 @@ public class CartPage extends BasePage {
         return items;
     }
 
+    /**
+     * Находит самый дешевый товар.
+     *
+     * @return дешевый товар или null, если корзина пуста.
+     */
     @Step("Find cheapest item in cart")
     public CartItem findCheapestItem() {
         List<CartItem> items = getItems();
@@ -64,6 +84,11 @@ public class CartPage extends BasePage {
                 .orElse(null);
     }
 
+    /**
+     * Получает итоговую сумму корзины.
+     *
+     * @return число (double) итоговая сумма.
+     */
     @Step("Get total cart price")
     public double getTotal() {
         waiter.until(ExpectedConditions.visibilityOf(totalElement));
@@ -79,17 +104,31 @@ public class CartPage extends BasePage {
         return dashIndex != -1 ? name.substring(0, dashIndex).trim() : name.trim();
     }
 
+
+    /**
+     * Перейти на главную страницу.
+     *
+     * @return главная страница магазина.
+     */
     @Step("Click homo logo link")
     public MainPage goToHomePage() {
         waiter.until(ExpectedConditions.elementToBeClickable(homeLogoLink)).click();
         return new MainPage(driver, waiter);
     }
 
+    /**
+     * Обновляет корзину.
+     */
     @Step("Click update button to refresh cart")
     public void updateCart() {
         waiter.until(ExpectedConditions.elementToBeClickable(updateBtn)).click();
     }
 
+    /**
+     * Удаляет товар по индексу.
+     *
+     * @param index индекс товара для удаления.
+     */
     @Step("Remove item at index {index} from cart")
     public void removeItemByIndex(int index) {
         List<CartItem> items = getItems();
@@ -102,6 +141,9 @@ public class CartPage extends BasePage {
         waiter.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".table.table-striped.table-bordered tbody tr td")));
     }
 
+    /**
+     * Внутренний класс для хранения элементов товара.
+     */
     public static class CartItem {
         private String name;
         private double price;

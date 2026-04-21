@@ -13,10 +13,21 @@ import utils.TestDataUtils;
 
 import java.util.List;
 
+/**
+ * Тест проверки сценария:
+ * 1. Поиск товара по названию
+ * 2. Сортировка результатов поиска
+ * 3. Добавление товаров в корзину
+ * 4. Изменение количества самого дешевого товара
+ * 5. Проверка корректности пересчета итоговой суммы
+ */
 @Epic("Shopping Cart")
 @Feature("Checkout & Totals")
 public class SearchAndCartTest extends BaseTest {
 
+    /**
+     * Тест проверки добавления товаров в корзину и изменения количества самого дешевого:
+     */
     @Test
     @Story("Update cart item quantity and verify calculation")
     @Severity(SeverityLevel.CRITICAL)
@@ -42,6 +53,14 @@ public class SearchAndCartTest extends BaseTest {
         verifyCartTotal(cartPage, cheapestItemName, newQty);
     }
 
+    /**
+     * Добавляет товар в корзину и возвращает на главную страницу.
+     * Используется для добавления первого товара в сценарии.
+     *
+     * @param listingPage страница списка товаров
+     * @param index индекс товара в списке
+     * @param qty количество товара (должно быть положительным)
+     */
     @Step("Add product at index {index} with quantity {qty} and return to main page")
     private void addProduct(ProductListingPage listingPage, int index, int qty) {
         ProductPage productPage = listingPage.navigateToProductByIndex(index);
@@ -49,12 +68,26 @@ public class SearchAndCartTest extends BaseTest {
         MainPage mainPage = cartPage.goToHomePage();
     }
 
+
+    /**
+     * Добавляет товар в корзину без возврата на главную страницу.
+     * Используется для добавления второго товара в сценарии.
+     *
+     * @param listingPage страница списка товаров
+     * @param index индекс товара в списке
+     * @param qty количество товара (должно быть положительным)
+     */
     @Step("Add product at index {index} with quantity {qty} and stay in cart")
     private void addProductToCart(ProductListingPage listingPage, int index, int qty) {
         ProductPage productPage = listingPage.navigateToProductByIndex(index);
         productPage.setQuantity(qty).addToCart();
     }
 
+    /**
+     * Увеличивает количество самого дешевого товара в корзине в 2 раза.
+     *
+     * @param cheapestItem самый дешевый товар в корзине
+     */
     @Step("Update cheapest item quantity (double id)")
     private void updateCartItemQuantity(CartPage.CartItem cheapestItem) {
         int currentQty = cheapestItem.getQuantity();
@@ -65,6 +98,13 @@ public class SearchAndCartTest extends BaseTest {
         tempCart.updateCart();
     }
 
+    /**
+     * Проверяет корректность итоговой суммы корзины после изменения количества товара.
+     *
+     * @param cartPage страница корзины
+     * @param originProductName название товара, количество которого было изменено
+     * @param newQty новое количество товара (должно быть положительным)
+     */
     @Step("Verify cart total is correct for item {originProductName} with quantity {newQty}")
     private void verifyCartTotal(CartPage cartPage, String originProductName, int newQty) {
         List<CartPage.CartItem> items = cartPage.getItems();

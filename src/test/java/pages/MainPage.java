@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Главная страница магазина.
+ * Содержит методы для поиска, навигации и выбора категорий.
+ */
 public class MainPage extends BasePage {
 
     @FindBy(id = "categorymenu")
@@ -28,6 +32,12 @@ public class MainPage extends BasePage {
     @FindBy(css = ".prdocutname")
     private List<WebElement> productLinks;
 
+    /**
+     * Конструктор главной страницы.
+     *
+     * @param driver драйвер.
+     * @param waiter экземпляр ожиданий.
+     */
     public MainPage(WebDriver driver, WebDriverWait waiter) {
         super(driver, waiter);
         PageFactory.initElements(driver, this);
@@ -35,22 +45,25 @@ public class MainPage extends BasePage {
     }
 
 
+    /**
+     * Получает список доступных категорий меню.
+     *
+     * @return список названий категорий.
+     */
     public List<String> getAvailableCategories() {
         List<String> categories = new ArrayList<>();
         for (WebElement link : categoryLinks) {
-            String text = link.getText().trim();
-            if (!text.equals("Cart") &&
-                !text.equals("Checkout") &&
-                !text.equals("Login or register") &&
-                !text.equals("Specials") &&
-                !text.equals("Account"))
-            {
-                categories.add(text);
-            }
+            categories.add(link.getText());
         }
         return categories;
     }
 
+    /**
+     * Переходит в категорию по названию.
+     *
+     * @param categoryName имя категории.
+     * @return новая страница категории.
+     */
     @Step("Navigate to category: {categoryName}")
     public CategoryPage navigateToCategory(String categoryName) {
         By linkLocator = By.linkText(categoryName);
@@ -59,6 +72,12 @@ public class MainPage extends BasePage {
         return new CategoryPage(driver, waiter);
     }
 
+    /**
+     * Ищет товар по названию.
+     *
+     * @param text поисковый запрос.
+     * @return страница результатов поиска.
+     */
     @Step("Search for product: {text}")
     public ProductListingPage searchFor(String text) {
         waiter.until(ExpectedConditions.visibilityOf(searchInput));
@@ -67,6 +86,11 @@ public class MainPage extends BasePage {
         return new ProductListingPage(driver, waiter);
     }
 
+    /**
+     * Переходит на страницу случайного товара с главной страницы.
+     *
+     * @return страница товара.
+     */
     @Step("Navigate to random product from main page")
     public ProductPage navigateToRandomProduct() {
         waiter.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".prdocutname")));
