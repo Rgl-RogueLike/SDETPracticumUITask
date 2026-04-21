@@ -53,7 +53,14 @@ public class MainPage extends BasePage {
     public List<String> getAvailableCategories() {
         List<String> categories = new ArrayList<>();
         for (WebElement link : categoryLinks) {
-            categories.add(link.getText());
+            String text = link.getText().trim();
+            if (!text.equals("Cart") &&
+                    !text.equals("Checkout") &&
+                    !text.equals("Login or register") &&
+                    !text.equals("Specials") &&
+                    !text.equals("Account")) {
+                categories.add(text);
+            }
         }
         return categories;
     }
