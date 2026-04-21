@@ -38,7 +38,7 @@ public class CartTest extends BaseTest{
         driver.get(ParameterProvider.get("cart.url"));
         CartPage cartPage = new CartPage(driver, waiter);
         List<CartPage.CartItem> items = cartPage.getItems();
-        List<Integer> indicesToDelete = findEvenIndicies(items);
+        List<Integer> indicesToDelete = findEvenIndices(items);
         double expectedTotal = calculateExpectedTotal(items);
         deleteItemsByIndices(cartPage, indicesToDelete);
         verifyCartTotal(cartPage, expectedTotal);
@@ -69,7 +69,7 @@ public class CartTest extends BaseTest{
      * @return список индексов для удаления (от большего к меньшему)
      */
     @Step("Find indices of even items")
-    private List<Integer> findEvenIndicies(List<CartPage.CartItem> items) {
+    private List<Integer> findEvenIndices(List<CartPage.CartItem> items) {
         List<Integer> indicesToDelete = new ArrayList<>();
         for (int i = 0; i < items.size(); i++) {
             if (i % 2 != 0) {
