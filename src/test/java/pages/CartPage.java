@@ -1,6 +1,7 @@
 package pages;
 
 import io.qameta.allure.Step;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,6 +11,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -95,6 +97,8 @@ public class CartPage extends BasePage {
         return parseCurrency(totalElement.getText());
     }
 
+
+
     private double parseCurrency(String text) {
         return Double.parseDouble(text.replace("$", "").replace(",", "").trim());
     }
@@ -103,7 +107,6 @@ public class CartPage extends BasePage {
         int dashIndex = name.indexOf("- ");
         return dashIndex != -1 ? name.substring(0, dashIndex).trim() : name.trim();
     }
-
 
     /**
      * Перейти на главную страницу.
@@ -140,6 +143,107 @@ public class CartPage extends BasePage {
 
         waiter.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".table.table-striped.table-bordered tbody tr td")));
     }
+
+    /**
+     * Увеличивает количество самого дешевого товара в корзине в 2 раза.
+     *
+     * @param cheapestItem самый дешевый товар в корзине
+     */
+    @Step("Update cheapest item quantity (double id)")
+    public static void updateCartItemQuantity(CartPage.CartItem cheapestItem, WebDriver driver, WebDriverWait waiter) {
+        int currentQty = cheapestItem.getQuantity();
+        int newQty = currentQty * 2;
+        cheapestItem.getQuantityInput().clear();
+        cheapestItem.getQuantityInput().sendKeys(String.valueOf(newQty));
+        CartPage tempCart = new CartPage(driver, waiter);
+        tempCart.updateCart();
+    }
+
+    /**
+     * Проверяет корректность итоговой суммы корзины после изменения количества товара.
+     *
+     * @param cartPage страница корзины
+     * @param originProductName название товара, количество которого было изменено
+     * @param newQty новое количество товара (должно быть положительным)
+     */
+    @Step("Verify cart total is correct for item {originProductName} with quantity {newQty}")
+    public static boolean verifyCartTotal(CartPage cartPage, String originProductName, int newQty) {
+        List<CartPage.CartItem> items = cartPage.getItems();
+        double expectedTotal = 0;
+        for (CartPage.CartItem item : cartPage.getItems()) {
+            if (item.getName().equals(originProductName)) {
+                expectedTotal += (item.getPrice() * newQty);
+            } else {
+                expectedTotal += (item.getPrice() * item.getQuantity());
+            }
+        }
+        double actualTotal = cartPage.getTotal();
+        return expectedTotal == actualTotal;
+    }
+
+    /**
+     * Находит индексы товаров с нечетными позициями (1, 3, 5...), для удаления четных товаров.
+     * Так как в пользовательском интерфейсе индексация начинается с 1.
+     * Сортирует в обратном порядке для корректного удаления.
+     *
+     * @param items список товаров в корзине
+     * @return список индексов для удаления (от большего к меньшему)
+     */
+    @Step("Find indices of even items")
+    public static List<Integer> findEvenIndices(List<CartPage.CartItem> items) {
+        List<Integer> indicesToDelete = new ArrayList<>();
+        for (int i = 0; i < items.size(); i++) {
+            if (i % 2 != 0) {
+                indicesToDelete.add(i);
+            }
+        }
+        indicesToDelete.sort(Collections.reverseOrder());
+        return indicesToDelete;
+    }
+
+    /**
+     * Рассчитывает ожидаемую итоговую сумму для оставшихся товаров
+     * (удаляются только нечетные позиции).
+     *
+     * @param items исходный список товаров
+     * @return ожидаемая итоговая сумма четных позиций
+     */
+    @Step("Calculate expected total sum for remaining items")
+    public static double calculateExpectedTotal(List<CartPage.CartItem> items) {
+        double total = 0;
+        for (int i = 0; i < items.size(); i++) {
+            if (i % 2 == 0) {
+                total += items.get(i).getTotal();
+            }
+        }
+        return total;
+    }
+
+    /**
+     * Удаляет товары из корзины по заданным индексам.
+     *
+     * @param cartPage страница корзины
+     * @param indices список индексов для удаления
+     */
+    @Step("Delete items by indices: {indices}")
+    public static void deleteItemsByIndices(CartPage cartPage, List<Integer> indices) {
+        for (int index : indices) {
+            cartPage.removeItemByIndex(index);
+        }
+    }
+
+    /**
+     * Проверяет соответствие итоговой суммы корзины ожидаемому значению.
+     *
+     * @param cartPage страница корзины
+     * @param expected ожидаемая итоговая сумма
+     */
+    @Step("Verify cart total equals {expected}")
+    public static boolean verifyCartTotal(CartPage cartPage, double expected) {
+        double actual = cartPage.getTotal();
+        return expected == actual;
+    }
+
 
     /**
      * Внутренний класс для хранения элементов товара.
