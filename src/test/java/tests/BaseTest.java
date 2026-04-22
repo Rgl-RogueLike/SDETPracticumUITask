@@ -4,6 +4,9 @@ import helpers.ParameterProvider;
 import io.qameta.allure.Attachment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -26,6 +29,18 @@ public abstract class BaseTest {
     protected WebDriver driver;
     protected WebDriverWait waiter;
 
+    private boolean isTestFailed = false;
+
+    /**
+     * Если тест завершается с исключением (падает), флаг {@code isTestFailed} устанавливается в {@code true}.
+     */
+    @RegisterExtension
+    AfterTestExecutionCallback wathman = context -> {
+        if (context.getExecutionException().isPresent()) {
+            isTestFailed = true;
+        }
+    };
+
     /**
      * Настройка тестового окружения перед каждым тестом.
      */
@@ -43,6 +58,9 @@ public abstract class BaseTest {
                 Duration.ofSeconds(Long.parseLong(ParameterProvider.get("explicit.wait.time")))));
         driver = DRIVER.get();
         waiter = WAITER.get();
+        int windowWidth = Integer.parseInt(ParameterProvider.get("screen.width.resolution"));
+        int windowHeight = Integer.parseInt(ParameterProvider.get("screen.height.resolution"));
+        driver.manage().window().setSize(new Dimension(windowWidth, windowHeight));
         driver.get(ParameterProvider.get("base.url"));
     }
 
@@ -53,7 +71,9 @@ public abstract class BaseTest {
     public void tearDown() {
         WebDriver drv = DRIVER.get();
         if (drv != null) {
-            attachScreenshot();
+            if (isTestFailed) {
+                attachScreenshot();
+            }
             drv.quit();
             DRIVER.remove();
             WAITER.remove();
