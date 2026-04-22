@@ -4,14 +4,13 @@ import helpers.ParameterProvider;
 import io.qameta.allure.Attachment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
+import utils.WebDriverFactory;
 
 /**
  * Абстрактный базовый класс для всех UI-тестов.
@@ -26,23 +25,33 @@ public abstract class BaseTest {
     protected WebDriver driver;
     protected WebDriverWait waiter;
 
+    private boolean isTestFailed = false;
+
+    /**
+     * Если тест завершается с исключением (падает), флаг {@code isTestFailed} устанавливается в {@code true}.
+     */
+    @RegisterExtension
+    AfterTestExecutionCallback wathman = context -> {
+        if (context.getExecutionException().isPresent()) {
+            isTestFailed = true;
+        }
+    };
+
     /**
      * Настройка тестового окружения перед каждым тестом.
      */
     @BeforeEach
     public void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--start-maximized");
-        options.addArguments("--remote-allow-origins=*");
-        options.addArguments("--disable-blink-features=AutomationControlled");
-        if ("true".equals(System.getenv("HEADLESS"))) {
-            options.addArguments("--headless=new");
-        }
-        DRIVER.set(new ChromeDriver(options));
-        WAITER.set(new WebDriverWait(DRIVER.get(),
-                Duration.ofSeconds(Long.parseLong(ParameterProvider.get("explicit.wait.time")))));
-        driver = DRIVER.get();
-        waiter = WAITER.get();
+        WebDriver driver = WebDriverFactory.createDriver(ParameterProvider.get("browser.chrome"));
+        int windowWidth = Integer.parseInt(ParameterProvider.get("screen.width.resolution"));
+        int windowHeight = Integer.parseInt(ParameterProvider.get("screen.height.resolution"));
+        WebDriverFactory.setWindowSize(driver, windowWidth, windowHeight);
+
+        DRIVER.set(driver);
+        WAITER.set(WebDriverFactory.createWebDriverWait(driver, ParameterProvider.get("explicit.wait.time")));
+
+        this.driver = DRIVER.get();
+        this.waiter = WAITER.get();
         driver.get(ParameterProvider.get("base.url"));
     }
 
@@ -53,7 +62,9 @@ public abstract class BaseTest {
     public void tearDown() {
         WebDriver drv = DRIVER.get();
         if (drv != null) {
-            attachScreenshot();
+            if (isTestFailed) {
+                attachScreenshot();
+            }
             drv.quit();
             DRIVER.remove();
             WAITER.remove();
