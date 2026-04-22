@@ -167,7 +167,7 @@ public class CartPage extends BasePage {
      * @param newQty новое количество товара (должно быть положительным)
      */
     @Step("Verify cart total is correct for item {originProductName} with quantity {newQty}")
-    public static boolean verifyCartTotal(CartPage cartPage, String originProductName, int newQty) {
+    public static double verifyCartTotal(CartPage cartPage, String originProductName, int newQty) {
         List<CartPage.CartItem> items = cartPage.getItems();
         double expectedTotal = 0;
         for (CartPage.CartItem item : cartPage.getItems()) {
@@ -177,8 +177,7 @@ public class CartPage extends BasePage {
                 expectedTotal += (item.getPrice() * item.getQuantity());
             }
         }
-        double actualTotal = cartPage.getTotal();
-        return expectedTotal == actualTotal;
+        return expectedTotal;
     }
 
     /**

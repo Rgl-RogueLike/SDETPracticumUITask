@@ -52,6 +52,9 @@ public class SearchAndCartTest extends BaseTest {
         String cheapestItemName = cheapestItem.getName();
         int newQty = cheapestItem.getQuantity() * 2;
         CartPage.updateCartItemQuantity(cheapestItem, driver, waiter);
-        Assertions.assertTrue(CartPage.verifyCartTotal(cartPage, cheapestItemName, newQty), "Сумма не совпадает после изменения количества");
+
+        double expectedTotal = CartPage.verifyCartTotal(cartPage, cheapestItemName, newQty);
+        double actualTotal = cartPage.getTotal();
+        Assertions.assertEquals(expectedTotal, actualTotal,0.01 , "Сумма не совпадает после изменения количества");
     }
 }
