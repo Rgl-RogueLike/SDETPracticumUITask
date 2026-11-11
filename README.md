@@ -1,50 +1,98 @@
-Чек-лист 1: Проверка категории и сортировки
+# SDET Practicum: UI Test Automation
 
-    1. Установить размер окна 1920x1080
+Автотесты UI для интернет-магазина [automationteststore.com](https://automationteststore.com/). Проект покрывает каталог, сортировку товаров, поиск и работу с корзиной.
 
-    2. Получить категории (Makeup/Cheeks/Eyes/Face/Lips/Nails) → shuffle
+## Что проверяется
 
-    3. Найти первую категорию с ≥ 4 товаров:
+### 1. Сортировка товаров в категории — `CategoryTest`
 
-    4. Проверить 4 вида сортировки:
-        Name A-Z
-        Name Z-A
-        Price Low-High
-        Price High-Low
+- Берётся список категорий, `HOME` исключается.
+- Находится первая категория минимум с 4 товарами.
+- Проверяются все четыре вида сортировки: `Name A - Z`, `Name Z - A`, `Price Low > High`, `Price High > Low`.
 
-Чек-лист 2: Добавление товаров через поиск и проверка корзины
+### 2. Поиск и корзина — `SearchAndCartTest`
 
-    1. Главная → Поиск "shirt" → Сортировка Name A-Z
+- Поиск по запросу `shirt` и сортировка `Name A - Z`.
+- Добавление двух товаров со случайным количеством.
+- Поиск самого дешёвого товара в корзине и удвоение его количества.
+- Пересчёт ожидаемой суммы и сверка с фактической (погрешность 0.01).
 
-    2. Добавить 2-й товар (index=1, qty=random) и вернуться на главную страницу:
+### 3. Случайные товары и удаление позиций — `CartTest`
 
-    3. Повторить поиск "shirt" → Name A-Z → Добавить 3-й товар (index=2, qty=random):
+- Добавление 5 случайных товаров со случайным количеством (1–7).
+- Расчёт ожидаемой суммы оставшихся товаров.
+- Удаление каждого второго товара (позиции 2, 4, …) от конца к началу.
+- Сверка итоговой суммы после удаления.
 
-    4. Корзина → найти самый дешевый товар
+## Стек
 
-    5. Удвоить количество самого дешевого товара
+- Java 17
+- Maven
+- Selenium WebDriver 4
+- JUnit 6 (Jupiter)
+- Page Object
+- Allure (Epic / Feature / Story / Severity, скриншот при падении)
+- WebDriverManager
+- `ThreadLocal` для thread-safe работы WebDriver
 
-    6. Рассчитать expectedTotal
+## Структура проекта
 
-    7. Проверить actualTotal == expectedTotal (delta 0.01)
+```text
+.github/workflows/ui-tests.yml        # CI: сборка, прогон, Allure-артефакт
+src/test/java/
+├── helpers/ParameterProvider.java    # чтение config.properties
+├── pages/                            # Page Object + статические шаги
+├── tests/                            # BaseTest и три теста
+└── utils/                            # WebDriverFactory, генерация данных
+src/test/resources/configurations/config.properties
+```
 
-Чек-лист 3: Случайные товары, удаление по нечётным индексам
+## Запуск
 
-    1. Перейти на главную страницу
+Требования: JDK 17, Maven, установленный Google Chrome.
 
-    2. Добавить 5 случайных товаров с рандомным количеством (1–7):
+```bash
+mvn clean test
+```
 
-        Для каждого: Главная → Случайный товар → Установить qty → Добавить в корзину → На главную
+Отчёт Allure:
 
-    3. Перейти в корзину (URL из config)
+```bash
+mvn allure:serve
+```
 
-    4. Получить список товаров
+Пример отчёта — в [`screenshots/AllureScreenshot.png`](screenshots/AllureScreenshot.png).
 
-    5. Найти нечётные индексы (1, 3) → отсортировать по убыванию [3, 1]
+Запуск в headless-режиме (как в CI):
 
-    6. Рассчитать ожидаемую сумму чётных позиций
+```bash
+# Linux / macOS
+HEADLESS=true mvn clean test
 
-    7. Удалить товары по индексам 3→1
+# Windows PowerShell
+$env:HEADLESS="true"; mvn clean test
+```
 
-    8. Проверить: actualTotal == expectedTotal (delta 0.01)
+## Конфигурация
 
+Параметры вынесены в `src/test/resources/configurations/config.properties`:
+
+| Параметр | Назначение |
+|---|---|
+| `base.url`, `cart.url` | адреса магазина и корзины |
+| `browser.chrome` | браузер (сейчас поддерживается Chrome) |
+| `screen.width.resolution`, `screen.height.resolution` | размер окна браузера |
+| `explicit.wait.time` | явное ожидание, сек |
+| `sort.products.*` | ожидаемые названия вариантов сортировки |
+| `min.products.count` | минимум товаров в категории |
+| `amount.products.add.cart` | количество товаров в тесте корзины |
+| `min.products.quantity`, `max.products.quantity` | диапазон случайного количества |
+
+## CI
+
+Workflow `.github/workflows/ui-tests.yml` запускается на push и pull request: поднимает JDK 17, прогоняет `mvn clean test` в headless-режиме, генерирует Allure-отчёт и сохраняет артефакты `allure-report` и `test-results`.
+
+## Особенности
+
+- Тесты зависят от внешнего сайта, поэтому возможны падения при изменении разметки или ассортимента.
+- Скриншот прикрепляется к отчёту только при падении теста.
